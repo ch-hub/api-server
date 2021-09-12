@@ -5,4 +5,4 @@ const port = 3000;
 express().listen(port);
 logger.info(`${process.env.NODE_ENV} - API Server Start At Port ${port}`);
 
-console.log('hello')
+console.log('hello2')
