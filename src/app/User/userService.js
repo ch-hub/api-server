@@ -16,12 +16,12 @@ const {connect} = require("http2");
 exports.createUser = async function (id,pw) {
     try {
         // 이메일 중복 확인
-        const insertUserInfoParams = [id,pw];
+        const insertUserInfoParams = {id,pw};
 
         const connection = await pool.getConnection(async (conn) => conn);
 
         const userIdResult = await userDao.insertUserInfo(connection, insertUserInfoParams);
-        // console.log(userIdResult[1].id)
+        console.log(userIdResult[1].id)
         // console.log(`추가된 회원 : ${userIdResult[1]}`)
         connection.release();
         return response(baseResponse.SUCCESS);
