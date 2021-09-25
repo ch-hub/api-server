@@ -33,8 +33,8 @@ async function selectUserIds(connection, userId) {
 // 유저 생성
 async function insertUserInfo(connection, insertUserInfoParams) {
   const insertUserInfoQuery = `
-        INSERT INTO User(id,pw)
-        VALUES (?, ?);
+        INSERT INTO User(id,pw,name,phone,address)
+        VALUES (?, ?, ?, ?, ?);
     `;
   const insertUserInfoRow = await connection.query(
     insertUserInfoQuery,
