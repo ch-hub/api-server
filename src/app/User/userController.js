@@ -26,14 +26,21 @@ exports.postUsers = async function (req, res) {
     /**
      * Body: email, password, nickname
      */
-    const {id,pw} = req.body;
+    const {id,pw,name,phone,address} = req.body;
 
+    if (!id) return res.send(errResponse(baseResponse.SIGNUP_ID_EMPTY));
+    if (!pw) return res.send(errResponse(baseResponse.SIGNUP_PW_EMPTY));
+    if (!phone) return res.send(errResponse(baseResponse.SIGNUP_PHONE_EMPTY));
+    if (!name) return res.send(errResponse(baseResponse.SIGNUP_NAME_EMPTY));
+    if (!address) return res.send(errResponse(baseResponse.SIGNUP_ADDRESS_EMPTY));
     console.log(id, pw)
     const signUpResponse = await userService.createUser(
         id,
-        pw
+        pw,
+        name,
+        phone,
+        address
     );
-
     return res.send(signUpResponse);
 };
 

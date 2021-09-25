@@ -9,18 +9,18 @@ async function selectUser(connection) {
 }
 
 // 이메일로 회원 조회
-async function selectUserEmail(connection, email) {
+async function selectUserId(connection, id) {
   const selectUserEmailQuery = `
-                SELECT email, nickname 
-                FROM UserInfo 
-                WHERE email = ?;
+                SELECT id 
+                FROM User
+                WHERE id = ?;
                 `;
-  const [emailRows] = await connection.query(selectUserEmailQuery, email);
-  return emailRows;
+  const [idRows] = await connection.query(selectUserEmailQuery, id);
+  return idRows;
 }
 
 // userId 회원 조회
-async function selectUserId(connection, userId) {
+async function selectUserIds(connection, userId) {
   const selectUserIdQuery = `
                  SELECT id, email, nickname 
                  FROM UserInfo 
@@ -83,8 +83,8 @@ async function updateUserInfo(connection, id, nickname) {
 
 module.exports = {
   selectUser,
-  selectUserEmail,
   selectUserId,
+  selectUserIds,
   insertUserInfo,
   selectUserPassword,
   selectUserAccount,
