@@ -9,13 +9,13 @@ const Caver = require('caver-js')
 // const secretAccessKey = config.secretAccessKey
 
 // Configuration Part
-const chainId = '1001'
+const chainId = 1001
 const accessKeyId = "KASKEKWRG3OV1873Y743FB5M";
 const secretAccessKey = "6P3gXM3bnjUjRr7beeHhG0KEZxhNAQzmC_7vOfNf";
 
 
 caver = new CaverExtKAS()
-caver.initKASAPI(chainId,accessKeyId,secretAccessKey)
+caver.initKASAPI(chainId, accessKeyId, secretAccessKey)
 
 // 하기전 인증필요
 const initKAS = (chainId, accessKeyId, secretAccessKey) => {
