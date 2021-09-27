@@ -9,7 +9,7 @@ const Caver = require('caver-js')
 // const secretAccessKey = config.secretAccessKey
 
 // Configuration Part
-const chainId = '1001'
+const chainId = 1001
 const accessKeyId = "KASKEKWRG3OV1873Y743FB5M";
 const secretAccessKey = "6P3gXM3bnjUjRr7beeHhG0KEZxhNAQzmC_7vOfNf";
 
@@ -34,11 +34,34 @@ caver.initKASAPI(chainId,accessKeyId,secretAccessKey)
 const createAccount = async () => {
     try{
         const result = await caver.kas.wallet.createAccount()
+
         return result
     }catch (error) {
         console.error(error)
     }
 }
+
+const getBalance = async (account) => {
+    try {
+        const option = {
+            headers: [
+                {
+                    name: 'Authorization',
+                    value: `Basic ${Buffer.from(`${accessKeyId}:${secretAccessKey}`).toString('base64')}`,
+                },
+                { name: 'x-chain-id', value: chainId },
+            ],
+        }
+        const caver = new Caver(new Caver.providers.HttpProvider("https://node-api.klaytnapi.com/v1/klaytn", option))
+
+        const balance = await caver.rpc.klay.getBalance(account)
+        return balance
+
+    }catch (error){
+        console.error(error)
+    }
+}
+
 //
 // /**
 //  * 계약 배포
@@ -180,6 +203,7 @@ const createAccount = async () => {
 //
 //
 module.exports.createAccount = createAccount
+module.exports.getBalance = getBalance
 // module.exports.deployNft = deployNft
 // module.exports.checkTxCommitted = checkTxCommitted
 // module.exports.getContractAddress = getContractAddress

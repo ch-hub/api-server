@@ -52,7 +52,10 @@ exports.getWallet = async function(req,res){
     const id = req.params.id;
     if (!id) return res.send(errResponse(baseResponse.USER_USERID_EMPTY));
     const result = await userProvider.getAccount(id);
-    return res.send(response(baseResponse.SUCCESS, result));
+    const balance = await nft.getBalance(result.walletAddress)
+    const res2 = parseInt(balance,16)
+    console.log(res2.toString())
+    return res.send(response(baseResponse.SUCCESS, res2.toString()));
 }
 /**
  * API No. 2
