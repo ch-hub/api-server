@@ -33,8 +33,8 @@ async function selectUserIds(connection, userId) {
 // 유저 생성
 async function insertUserInfo(connection, insertUserInfoParams) {
   const insertUserInfoQuery = `
-        INSERT INTO User(id,pw,name,phone,address)
-        VALUES (?, ?, ?, ?, ?);
+        INSERT INTO User(id,pw,name,phone,address,walletAddress)
+        VALUES (?, ?, ?, ?, ?,?);
     `;
   const insertUserInfoRow = await connection.query(
     insertUserInfoQuery,
@@ -43,7 +43,18 @@ async function insertUserInfo(connection, insertUserInfoParams) {
 
   return insertUserInfoRow;
 }
-
+// async function insertUserWallet(connection,walletAddress){
+//   const insertUserWalletQuery = `
+//         INSERT INTO User(walletAddress)
+//         VALUES (?);
+//     `;
+//   const insertUserWalletRow = await connection.query(
+//       insertUserWalletQuery,
+//       walletAddress
+//   );
+//
+//   return insertUserWalletRow;
+// }
 // 패스워드 체크
 async function selectUserPassword(connection, selectUserPasswordParams) {
   const selectUserPasswordQuery = `
@@ -57,7 +68,17 @@ async function selectUserPassword(connection, selectUserPasswordParams) {
 
   return selectUserPasswordRow;
 }
-
+async function selectUserWallet(connection, id) {
+  const selectUserAccountQuery = `
+        SELECT walletAddress
+        FROM User 
+        WHERE id = ?;`;
+  const selectUserWalletRow = await connection.query(
+      selectUserAccountQuery,
+      id
+  );
+  return selectUserWalletRow[0];
+}
 // 유저 계정 상태 체크 (jwt 생성 위해 id 값도 가져온다.)
 async function selectUserAccount(connection, email) {
   const selectUserAccountQuery = `
@@ -89,4 +110,5 @@ module.exports = {
   selectUserPassword,
   selectUserAccount,
   updateUserInfo,
+  selectUserWallet,
 };

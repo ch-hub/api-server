@@ -6,21 +6,42 @@ const userDao = require("./userDao");
 const baseResponse = require("../../../config/baseResponseStatus");
 const {response} = require("../../../config/response");
 const {errResponse} = require("../../../config/response");
+const CaverExtKAS = require('caver-js-ext-kas')
+const Caver = require('caver-js')
 
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const {connect} = require("http2");
+const nft = require("./nft");
 
 // Service: Create, Update, Delete 비즈니스 로직 처리
 
+// exports.createAccount = async function(){
+//     try{
+//         const result = await nft.createAccount()
+//         console.log(result.address);
+//         const connection = await pool.getConnection(async (conn) => conn);
+//         const walletAddress = result.address;
+//         const userWallet = await userDao.insertUserWallet(connection, walletAddress);
+//         connection.release();
+//         return response(baseResponse.SUCCESS);
+//     }catch (error) {
+//         console.error(error)
+//     }
+// }
 exports.createUser = async function (id,pw,name,phone,address) {
     try {
         // 이메일 중복 확인
+
         const idRows = await userProvider.idCheck(id);
         if (idRows.length > 0)
             return errResponse(baseResponse.SIGNUP_REDUNDANT_ID);
 
-        const insertUserInfoParams = [id,pw,name,phone,address];
+        const result = await nft.createAccount()
+        console.log(result.address);
+        const walletAddress = result.address;
+
+        const insertUserInfoParams = [id,pw,name,phone,address,walletAddress];
 
         const connection = await pool.getConnection(async (conn) => conn);
 

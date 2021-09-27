@@ -9,10 +9,10 @@ module.exports = function(app){
     app.post('/app/users', user.postUsers);
 
     // 2. 유저 조회 API (+ 검색)
-    app.get('/app/users',user.getUsers); 
+    app.get('/app/users',user.getUsers);
 
-    // 3. 특정 유저 조회 API
-    app.get('/app/users/:userId', user.getUserById);
+    app.get('/app/wallet/:id', user.getWallet);
+
 
 
     // TODO: After 로그인 인증 방법 (JWT)

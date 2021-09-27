@@ -1,3 +1,4 @@
+const nft = require("./nft");
 const jwtMiddleware = require("../../../config/jwtMiddleware");
 const userProvider = require("../../app/User/userProvider");
 const userService = require("../../app/User/userService");
@@ -6,6 +7,8 @@ const {response, errResponse} = require("../../../config/response");
 
 const regexEmail = require("regex-email");
 const {emit} = require("nodemon");
+const CaverExtKAS = require('caver-js-ext-kas')
+const Caver = require('caver-js')
 
 /**
  * API No. 0
@@ -44,6 +47,13 @@ exports.postUsers = async function (req, res) {
     return res.send(signUpResponse);
 };
 
+
+exports.getWallet = async function(req,res){
+    const id = req.params.id;
+    if (!id) return res.send(errResponse(baseResponse.USER_USERID_EMPTY));
+    const result = await userProvider.getAccount(id);
+    return res.send(response(baseResponse.SUCCESS, result));
+}
 /**
  * API No. 2
  * API Name : 유저 조회 API (+ 이메일로 검색 조회)
