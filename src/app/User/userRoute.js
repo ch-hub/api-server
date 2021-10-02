@@ -13,6 +13,7 @@ module.exports = function(app){
 
     app.get('/app/wallet/:id', user.getWallet);
 
+    app.get('/app/test',user.test);
 
 
     // TODO: After 로그인 인증 방법 (JWT)

@@ -79,6 +79,16 @@ async function selectUserWallet(connection, id) {
   );
   return selectUserWalletRow[0];
 }
+async function selectTimer(connection){
+  const selectTimerQuery = `
+        SELECT walletAddress
+        FROM User 
+        WHERE id = 'testtesst11';`;
+  const selectTimerRow = await connection.query(
+      selectTimerQuery
+  );
+  return selectTimerRow[0];
+}
 // 유저 계정 상태 체크 (jwt 생성 위해 id 값도 가져온다.)
 async function selectUserAccount(connection, email) {
   const selectUserAccountQuery = `
@@ -111,4 +121,5 @@ module.exports = {
   selectUserAccount,
   updateUserInfo,
   selectUserWallet,
+  selectTimer,
 };

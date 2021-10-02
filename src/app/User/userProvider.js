@@ -1,8 +1,9 @@
 const { pool } = require("../../../config/database");
 const { logger } = require("../../../config/winston");
-
+const schedule = require('node-schedule');
+const rule = new schedule.RecurrenceRule();
 const userDao = require("./userDao");
-
+const cron = require('node-cron');
 // Provider: Read 비즈니스 로직 처리
 
 exports.retrieveUserList = async function (email) {
@@ -21,6 +22,17 @@ exports.retrieveUserList = async function (email) {
     return userListResult;
   }
 };
+exports.timer = async function (){
+  rule.minute = 1;
+  const connection = await pool.getConnection(async (conn) => conn);
+  const userAccount = await userDao.selectTimer(connection);
+  cron.schedule('* * * * *', function () {
+    console.log(userAccount[0]);
+  });
+  connection.release();
+  return userAccount[0];
+}
+
 exports.getAccount = async function (id){
   const connection = await pool.getConnection(async (conn) => conn);
   const userAccount = await userDao.selectUserWallet(connection, id);
