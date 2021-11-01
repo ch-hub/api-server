@@ -75,3 +75,11 @@ exports.accountCheck = async function (email) {
 
   return userAccountResult;
 };
+
+exports.findOne = async function (id) {
+  const connection = await pool.getConnection(async (conn) => conn);
+  const userAddressResult = await userDao.selectUserAddress(connection, id);
+  connection.release();
+
+  return userAddressResult[0];
+};

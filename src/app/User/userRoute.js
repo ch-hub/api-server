@@ -14,8 +14,9 @@ module.exports = function(app){
     app.get('/app/wallet/:id', user.getWallet);
 
     app.get('/app/test',user.test);
-
-
+    
+    // 전송
+    app.post('/app/deal',user.postDeal);
 
     // TODO: After 로그인 인증 방법 (JWT)
     // 로그인 하기 API (JWT 생성)

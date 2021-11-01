@@ -111,6 +111,17 @@ async function updateUserInfo(connection, id, nickname) {
   return updateUserRow[0];
 }
 
+async function selectUserAddress(connection, id) {
+  const selectUserAddressQuery = `
+        SELECT walletAddress
+        FROM User 
+        WHERE id = ?;`;
+  const selectUserAddressRow = await connection.query(
+      selectUserAddressQuery,
+      id
+  );
+  return selectUserAddressRow[0];
+}
 
 module.exports = {
   selectUser,
@@ -122,4 +133,5 @@ module.exports = {
   updateUserInfo,
   selectUserWallet,
   selectTimer,
+  selectUserAddress
 };

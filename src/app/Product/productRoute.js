@@ -5,4 +5,5 @@ module.exports = function(app) {
     app.get('/app/products',product.getProducts);
 
     app.get('/app/products/:productIdx',product.getProductsIdx);
+
 }

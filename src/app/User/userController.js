@@ -8,7 +8,11 @@ const {response, errResponse} = require("../../../config/response");
 const regexEmail = require("regex-email");
 const {emit} = require("nodemon");
 const CaverExtKAS = require('caver-js-ext-kas')
-const Caver = require('caver-js')
+const caver = new CaverExtKAS();
+const chainId = 1001;
+const accessKeyId = "KASKEKWRG3OV1873Y743FB5M";
+const secretAccessKey = "6P3gXM3bnjUjRr7beeHhG0KEZxhNAQzmC_7vOfNf";
+
 
 /**
  * API No. 0
@@ -152,6 +156,27 @@ exports.patchUsers = async function (req, res) {
     }
 };
 
+caver.initKASAPI(chainId, accessKeyId, secretAccessKey);
+
+exports.postDeal = async function(req,res){
+
+    let value = req.body.value;
+    const fromUserId = req.body.fromUserId;
+    const toUserId = req.body.toUserId;
+
+    const fromUser = await userProvider.findOne(fromUserId);
+    const toUser = await userProvider.findOne(toUserId);
+    value = value * 1000000000000000000
+
+    const tx = {
+        from: fromUser.walletAddress,
+        to: toUser.walletAddress,
+        value: value,
+        submit: true,
+    };
+    const result = await caver.kas.wallet.requestValueTransfer(tx);
+    res.json(result);
+};
 
 
 
