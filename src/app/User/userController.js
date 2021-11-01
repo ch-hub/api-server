@@ -158,23 +158,10 @@ exports.patchUsers = async function (req, res) {
 
 caver.initKASAPI(chainId, accessKeyId, secretAccessKey);
 
-exports.postDeal = async function(req,res){
-
-    const buyerId = req.body.buyerId;
-    const productIdx = req.body.productIdx;
-    const installment = req.body.installment;
-
-    const productInfo = await userProvider.findProduct(productIdx);
-    let value = productInfo.price;
-    let sellerId = productInfo.ownerId;
-    let remains = value - value/installment;
-    const insertDeal = await userService.insertProductInfo(buyerId, remains, installment);
-
-
-    let fromUser = await userProvider.findOne(buyerId);
-    let toUser = await userProvider.findOne("company");
-    value = value * 100000000000000000 / installment;
-
+async function transferValue(fromId, toId, value) {
+    // 결제
+    const fromUser = await userProvider.findOne(fromId);
+    const toUser = await userProvider.findOne(toId);
     const tx = {
         from: fromUser.walletAddress,
         to: toUser.walletAddress,
@@ -182,18 +169,53 @@ exports.postDeal = async function(req,res){
         submit: true,
     };
     const result = await caver.kas.wallet.requestValueTransfer(tx);
-    fromUser = await userProvider.findOne("company");
-    toUser = await userProvider.findOne(sellerId);
+    return result;
+}
 
-    value = value * 100000000000000000;
-    const tx2 = {
-        from: fromUser.walletAddress,
-        to: toUser.walletAddress,
-        value: value,
-        submit: true,
-    }
-    const result2 = await caver.kas.wallet.requestValueTransfer(tx2);
-    res.json(result);
+exports.postDeal = async function(req,res){
+
+    const buyerId = req.body.buyerId;           // 구매자 ID
+    const productIdx = req.body.productIdx;     // 상품 ID
+    const installment = req.body.installment;   // 할부 카운트
+
+    const productInfo = await userProvider.findProduct(productIdx);
+
+
+    // 첫 결제 대금(원화)
+    const firstpayWon = productInfo.price/installment + productInfo.price%installment
+    // 남은 결제 대금(원화)
+    const remainsWon = productInfo.price - firstpayWon
+
+    // 원화 -> klay(peb단위) 로 변환
+    // 지금은 그대로 바꿨지만 나중에 환율 변화 필요
+    const totalpayKlay = caver.utils.convertToPeb(productInfo.price, "mKLAY")
+    const firstpayKlay = caver.utils.convertToPeb(firstpayWon, "mKLAY")
+    const remainpayKlay = caver.utils.convertToPeb(remainsWon, "mKLAY")
+
+    const buyerToCompany = await transferValue(buyerId, "company",firstpayKlay);
+    const companyToSeller = await transferValue("company", productInfo.ownerId, firstpayKlay);
+    console.log(buyerToCompany)
+    console.log(companyToSeller)
+
+
+    // 남은 할부 개월 수, 결제 비용은 저장
+    const insertDeal = await userService.insertProductInfo(buyerId, remainpayKlay, installment-1);
+
+
+    // res.json(result);
+
+
+    // console.log(productInfo.price)
+    // console.log(firstpayWon)
+    // console.log(remainsWon)
+    // console.log(' ')
+    // console.log(totalpayKlay)
+    // console.log(firstpayKlay)
+    // console.log(remainpayKlay)
+    // console.log(' ')
+    // console.log(caver.utils.convertFromPeb(totalpayKlay))
+    // console.log(caver.utils.convertFromPeb(firstpayKlay))
+    // console.log(caver.utils.convertFromPeb(remainpayKlay))
 };
 
 
