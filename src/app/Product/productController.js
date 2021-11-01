@@ -12,15 +12,14 @@ const Caver = require('caver-js')
 
 
 exports.getProducts = async function(req,res){
-    const productIdx = req.query.productIdx;
-    if(!productIdx)
-    {
+
         const productList = await productProvider.retrieveProductList();
         return res.send(response(baseResponse.SUCCESS, productList));
-    }
-    else
-    {
-        const productListByIdx = await productProvider.retrieveProductList(productIdx);
+};
+
+exports.getProductsIdx = async function(req,res){
+    const productIdx = req.params.productIdx;
+
+        const productListByIdx = await productProvider.retrieveProductIdx(productIdx);
         return res.send(response(baseResponse.SUCCESS, productListByIdx));
-    }
 };
