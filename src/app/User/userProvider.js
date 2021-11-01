@@ -83,3 +83,12 @@ exports.findOne = async function (id) {
 
   return userAddressResult[0];
 };
+
+
+exports.findProduct = async function (productIdx) {
+  const connection = await pool.getConnection(async (conn) => conn);
+  const productInfoResult = await userDao.selectProductInfo(connection, productIdx);
+  connection.release();
+
+  return productInfoResult[0];
+};

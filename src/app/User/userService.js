@@ -125,3 +125,18 @@ exports.editUser = async function (id, nickname) {
         return errResponse(baseResponse.DB_ERROR);
     }
 }
+
+exports.insertProductInfo = async function (buyerId, remains, installment) {
+    try {
+        const insertDealInfoParams = [buyerId, remains, installment];
+        const connection = await pool.getConnection(async (conn) => conn);
+        const editUserResult = await userDao.insertDealInfo(connection, insertDealInfoParams)
+        connection.release();
+
+        return response(baseResponse.SUCCESS);
+
+    } catch (err) {
+        logger.error(`App - editUser Service error\n: ${err.message}`);
+        return errResponse(baseResponse.DB_ERROR);
+    }
+}

@@ -160,13 +160,20 @@ caver.initKASAPI(chainId, accessKeyId, secretAccessKey);
 
 exports.postDeal = async function(req,res){
 
-    let value = req.body.value;
-    const fromUserId = req.body.fromUserId;
-    const toUserId = req.body.toUserId;
+    const buyerId = req.body.buyerId;
+    const productIdx = req.body.productIdx;
+    const installment = req.body.installment;
 
-    const fromUser = await userProvider.findOne(fromUserId);
-    const toUser = await userProvider.findOne(toUserId);
-    value = value * 1000000000000000000
+    const productInfo = await userProvider.findProduct(productIdx);
+    let value = productInfo.price;
+    let sellerId = productInfo.ownerId;
+    let remains = value - value/installment;
+    const insertDeal = await userService.insertProductInfo(buyerId, remains, installment);
+
+
+    let fromUser = await userProvider.findOne(buyerId);
+    let toUser = await userProvider.findOne("company");
+    value = value * 100000000000000000 / installment;
 
     const tx = {
         from: fromUser.walletAddress,
@@ -175,6 +182,17 @@ exports.postDeal = async function(req,res){
         submit: true,
     };
     const result = await caver.kas.wallet.requestValueTransfer(tx);
+    fromUser = await userProvider.findOne("company");
+    toUser = await userProvider.findOne(sellerId);
+
+    value = value * 100000000000000000;
+    const tx2 = {
+        from: fromUser.walletAddress,
+        to: toUser.walletAddress,
+        value: value,
+        submit: true,
+    }
+    const result2 = await caver.kas.wallet.requestValueTransfer(tx2);
     res.json(result);
 };
 

@@ -123,6 +123,30 @@ async function selectUserAddress(connection, id) {
   return selectUserAddressRow[0];
 }
 
+async function selectProductInfo(connection, productIdx) {
+  const selectProductQuery = `
+        SELECT price, ownerId
+        FROM Product 
+        WHERE productIdx = ?;`;
+  const selectProductRow = await connection.query(
+      selectProductQuery,
+      productIdx
+  );
+  return selectProductRow[0];
+}
+async function insertDealInfo(connection, insertDealInfoParams) {
+  const insertDealInfoQuery = `
+        INSERT INTO Deal(buyerId, remains, installment,deal_at)
+        VALUES (?, ?, ?,now());
+    `;
+  const insertDealInfoRow = await connection.query(
+      insertDealInfoQuery,
+      insertDealInfoParams
+  );
+
+  return insertDealInfoRow;
+}
+
 module.exports = {
   selectUser,
   selectUserId,
@@ -133,5 +157,7 @@ module.exports = {
   updateUserInfo,
   selectUserWallet,
   selectTimer,
-  selectUserAddress
+  selectUserAddress,
+  selectProductInfo,
+  insertDealInfo
 };
