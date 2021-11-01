@@ -10,6 +10,19 @@ async function selectProduct(connection) {
 }
 
 
+async function selectProductIdx(connection,productIdx) {
+    const selectProductQuery = `
+        SELECT *
+        FROM Product
+        WHERE productIdx = ?;`;
+    const [productIdxRows] = await connection.query(
+        selectProductQuery,
+        productIdx
+    );
+    return productIdxRows;
+}
+
 module.exports = {
-    selectProduct
+    selectProduct,
+    selectProductIdx
 };
