@@ -65,6 +65,7 @@ exports.getWallet = async function(req,res){
     const walletResult = {walletAd,walletBalance}
     return res.send(response(baseResponse.SUCCESS, walletResult));
 }
+
 exports.test = async function(req,res){
     const timer = await userProvider.timer();
     return res.send(response(baseResponse.SUCCESS,timer));
@@ -201,8 +202,14 @@ exports.postDeal = async function(req,res){
     // 남은 할부 개월 수, 결제 비용은 저장
     const insertDeal = await userService.insertProductInfo(buyerId, remainpayKlay, installment-1);
 
+    const findIdx = await userProvider.findDealIdx(buyerId);
 
-    // res.json(result);
+    const deal_idx = findIdx.deal_idx;
+
+    const insertCal = await userService.insertCalInfo(deal_idx);
+
+
+    res.json(companyToSeller);
 
 
     // console.log(productInfo.price)

@@ -23,10 +23,9 @@ exports.retrieveUserList = async function (email) {
   }
 };
 exports.timer = async function (){
-  rule.minute = 1;
   const connection = await pool.getConnection(async (conn) => conn);
   const userAccount = await userDao.selectTimer(connection);
-  cron.schedule('* * * * *', function () {
+  cron.schedule('* * * * * *', function () {
     console.log(userAccount[0]);
   });
   connection.release();
@@ -92,3 +91,11 @@ exports.findProduct = async function (productIdx) {
 
   return productInfoResult[0];
 };
+
+exports.findDealIdx = async function (buyerId){
+  const connection = await pool.getConnection(async (conn) => conn);
+  const calInfoResult = await userDao.selectCalInfo(connection, buyerId);
+  connection.release();
+
+  return calInfoResult[0];
+}

@@ -81,13 +81,14 @@ async function selectUserWallet(connection, id) {
 }
 async function selectTimer(connection){
   const selectTimerQuery = `
-        SELECT walletAddress
-        FROM User 
-        WHERE id = 'testtesst11';`;
+    SELECT buyerId, remains, installment
+    from Deal
+           left join Calculate C on Deal.deal_idx = C.deal_idx
+    where TIMESTAMPDIFF(DAY, calculate_at, current_date) = 0;`;
   const selectTimerRow = await connection.query(
       selectTimerQuery
   );
-  return selectTimerRow[0];
+  return selectTimerRow;
 }
 // 유저 계정 상태 체크 (jwt 생성 위해 id 값도 가져온다.)
 async function selectUserAccount(connection, email) {
@@ -134,10 +135,23 @@ async function selectProductInfo(connection, productIdx) {
   );
   return selectProductRow[0];
 }
+
+async function selectCalInfo(connection, buyerId) {
+  const selectCalQuery = `
+        SELECT deal_idx
+        FROM Deal
+        WHERE buyerId = ?
+        ORDER BY deal_at DESC LIMIT 1;`;
+  const selectCalRow = await connection.query(
+      selectCalQuery,
+      buyerId
+  );
+  return selectCalRow[0];
+}
 async function insertDealInfo(connection, insertDealInfoParams) {
   const insertDealInfoQuery = `
         INSERT INTO Deal(buyerId, remains, installment,deal_at)
-        VALUES (?, ?, ?,now());
+        VALUES (?, ?, ?,current_timestamp);
     `;
   const insertDealInfoRow = await connection.query(
       insertDealInfoQuery,
@@ -145,6 +159,18 @@ async function insertDealInfo(connection, insertDealInfoParams) {
   );
 
   return insertDealInfoRow;
+}
+async function insertCalInfo(connection, deal_idx) {
+  const insertCalInfoQuery = `
+        INSERT INTO Calculate(deal_idx,calculate_at)
+        VALUES (?,current_timestamp );
+    `;
+  const insertCalInfoRow = await connection.query(
+      insertCalInfoQuery,
+      deal_idx
+  );
+
+  return insertCalInfoRow;
 }
 
 module.exports = {
@@ -159,5 +185,7 @@ module.exports = {
   selectTimer,
   selectUserAddress,
   selectProductInfo,
-  insertDealInfo
+  insertDealInfo,
+  selectCalInfo,
+  insertCalInfo
 };
