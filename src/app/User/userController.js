@@ -121,11 +121,11 @@ exports.getUserById = async function (req, res) {
  */
 exports.login = async function (req, res) {
 
-    const {email, password} = req.body;
+    const {id, pw} = req.body;
 
     // TODO: email, password 형식적 Validation
 
-    const signInResponse = await userService.postSignIn(email, password);
+    const signInResponse = await userService.postSignIn(id, pw);
 
     return res.send(signInResponse);
 };
@@ -224,8 +224,6 @@ exports.postDeal = async function(req,res){
     // console.log(caver.utils.convertFromPeb(firstpayKlay))
     // console.log(caver.utils.convertFromPeb(remainpayKlay))
 };
-
-
 
 
 

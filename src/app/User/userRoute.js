@@ -14,7 +14,8 @@ module.exports = function(app){
     app.get('/app/wallet/:id', user.getWallet);
 
     app.get('/app/test',user.test);
-    
+
+
     // 전송
     app.post('/app/deal',user.postDeal);
 
