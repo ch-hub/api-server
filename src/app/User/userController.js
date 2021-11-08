@@ -53,7 +53,14 @@ exports.postUsers = async function (req, res) {
 
 
 exports.getWallet = async function(req,res){
+    const userIdFromJWT = req.verifiedToken.userId
+
     const id = req.params.id;
+
+    if (userIdFromJWT != id) {
+        res.send(errResponse(baseResponse.USER_ID_NOT_MATCH));
+    }
+
     if (!id) return res.send(errResponse(baseResponse.USER_USERID_EMPTY));
     const result = await userProvider.getAccount(id);
     const balance = await nft.getBalance(result.walletAddress)
