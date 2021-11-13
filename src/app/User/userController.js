@@ -12,6 +12,7 @@ const caver = new CaverExtKAS();
 const chainId = 1001;
 const accessKeyId = "KASKEKWRG3OV1873Y743FB5M";
 const secretAccessKey = "6P3gXM3bnjUjRr7beeHhG0KEZxhNAQzmC_7vOfNf";
+const request = require('request');
 
 
 /**
@@ -73,6 +74,17 @@ exports.getWallet = async function(req,res){
     return res.send(response(baseResponse.SUCCESS, walletResult));
 }
 
+exports.klays = async function(req,res)
+{
+    const options = {
+        uri: "https://api.coingecko.com/api/v3/simple/price?ids=klay-token&vs_currencies=krw"
+    };
+    request(options,function(err,response,body){
+        console.log('body:', body);
+    })
+
+    return res.send(response(baseResponse.SUCCESS));
+}
 exports.test = async function(req,res){
     const timer = await userProvider.timer();
     return res.send(response(baseResponse.SUCCESS,timer));

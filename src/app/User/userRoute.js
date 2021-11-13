@@ -15,6 +15,8 @@ module.exports = function(app){
 
     app.get('/app/test',user.test);
 
+    app.get('/app/klay',user.klays);
+
 
     // 전송
     app.post('/app/deal',user.postDeal);
