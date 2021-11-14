@@ -79,11 +79,13 @@ exports.klays = async function(req,res)
     const options = {
         uri: "https://api.coingecko.com/api/v3/simple/price?ids=klay-token&vs_currencies=krw"
     };
-    request(options,function(err,response,body){
-        console.log('body:', body);
+    request(options,function(err,r,body){
+        const output = JSON.parse(body)
+        const value = output["klay-token"]["krw"]
+        return res.send(response(baseResponse.SUCCESS, value));
     })
 
-    return res.send(response(baseResponse.SUCCESS));
+    // return res.send(response(baseResponse.SUCCESS, result));
 }
 exports.test = async function(req,res){
     const timer = await userProvider.timer();
