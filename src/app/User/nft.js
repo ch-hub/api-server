@@ -182,7 +182,7 @@ const makeTokenURI = async () => {
     // Set connection with IPFS Node
     caver.ipfs.setIPFSNode('ipfs.infura.io', 5001, true)
     // `ipfs.txt` is located at `caver-js-examples/ipfs/using_ipfs_with_caver/resources`.
-    const inputJSONfile = `C:\\Users\\장창훈\\api-server\\src\\app\\User\\test.html`; // 민권 여기에 너가 올리고싶은 파일 경로 올리면댐
+    const inputJSONfile = `C:\\Users\\장창훈\\api-server\\src\\app\\User\\bnpl.png`; // 민권 여기에 너가 올리고싶은 파일 경로 올리면댐
 
     // Add a file to IPFS with file path
     const cid = await caver.ipfs.add(inputJSONfile)
