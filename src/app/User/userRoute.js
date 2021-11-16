@@ -17,6 +17,8 @@ module.exports = function(app){
 
     app.get('/app/klay',user.klays);
 
+    app.post('/app/ipfs',user.makeipfs);
+
 
     // 전송
     app.post('/app/deal',user.postDeal);

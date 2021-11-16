@@ -167,30 +167,30 @@ const getBalance = async (account) => {
 // }
 //
 //
-// const makeTokenURI = async () => {
-//     const option = {
-//         headers: [
-//             {
-//                 name: 'Authorization',
-//                 value: `Basic ${Buffer.from(`${accessKeyId}:${secretAccessKey}`).toString('base64')}`,
-//             },
-//             { name: 'x-chain-id', value: chainId },
-//         ],
-//     }
-//     const caver = new Caver(new Caver.providers.HttpProvider("https://node-api.klaytnapi.com/v1/klaytn", option))
-//
-//     // Set connection with IPFS Node
-//     caver.ipfs.setIPFSNode('ipfs.infura.io', 5001, true)
-//     // `ipfs.txt` is located at `caver-js-examples/ipfs/using_ipfs_with_caver/resources`.
-//     const inputJSONfile = `${__dirname}/test.json`
-//
-//     // Add a file to IPFS with file path
-//     const cid = await caver.ipfs.add(inputJSONfile)
-//     // console.log(`cid: ${cid}`)
-//
-//     // console.log('tokenURI : https://ipfs.io/ipfs/' + cid)
-//     return "https://ipfs.io/ipfs/" + cid
-// }
+const makeTokenURI = async () => {
+    const option = {
+        headers: [
+            {
+                name: 'Authorization',
+                value: `Basic ${Buffer.from(`${accessKeyId}:${secretAccessKey}`).toString('base64')}`,
+            },
+            { name: 'x-chain-id', value: chainId },
+        ],
+    }
+    const caver = new Caver(new Caver.providers.HttpProvider("https://node-api.klaytnapi.com/v1/klaytn", option))
+
+    // Set connection with IPFS Node
+    caver.ipfs.setIPFSNode('ipfs.infura.io', 5001, true)
+    // `ipfs.txt` is located at `caver-js-examples/ipfs/using_ipfs_with_caver/resources`.
+    const inputJSONfile = `C:\\Users\\장창훈\\api-server\\src\\app\\User\\test.html`; // 민권 여기에 너가 올리고싶은 파일 경로 올리면댐
+
+    // Add a file to IPFS with file path
+    const cid = await caver.ipfs.add(inputJSONfile)
+    console.log(`cid: ${cid}`)
+
+    // console.log('tokenURI : https://ipfs.io/ipfs/' + cid)
+    return "https://ipfs.io/ipfs/" + cid
+}
 //
 //
 // const main = async () => {
@@ -198,7 +198,7 @@ const getBalance = async (account) => {
 //     console.log(res)
 //
 // }
-//
+// //
 // main()
 //
 //
@@ -213,3 +213,4 @@ module.exports.getBalance = getBalance
 // module.exports.getTokenIdsByOwner = getTokenIdsByOwner
 // module.exports.getNftTotalSupply = getNftTotalSupply
 // module.exports.initKAS = initKAS
+module.exports.makeTokenURI = makeTokenURI

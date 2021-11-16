@@ -73,7 +73,11 @@ exports.getWallet = async function(req,res){
     const walletResult = {walletAd,walletBalance}
     return res.send(response(baseResponse.SUCCESS, walletResult));
 }
-
+exports.makeipfs = async function(req,res)
+{
+    const result = await nft.makeTokenURI();
+    return res.send(response(baseResponse.SUCCESS, result));
+}
 exports.klays = async function(req,res)
 {
     const options = {
