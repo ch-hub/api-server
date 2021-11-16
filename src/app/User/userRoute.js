@@ -19,6 +19,8 @@ module.exports = function(app){
 
     app.post('/app/ipfs',user.makeipfs);
 
+    //hongiktoken 전송
+    app.post('/app/stable',user.giveStable);
 
     // 전송
     app.post('/app/deal',user.postDeal);

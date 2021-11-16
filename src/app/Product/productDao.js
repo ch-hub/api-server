@@ -22,6 +22,8 @@ async function selectProductIdx(connection,productIdx) {
     return productIdxRows;
 }
 
+
+
 module.exports = {
     selectProduct,
     selectProductIdx

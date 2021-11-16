@@ -1,3 +1,4 @@
+require('dotenv').config()
 const nft = require("./nft");
 const jwtMiddleware = require("../../../config/jwtMiddleware");
 const userProvider = require("../../app/User/userProvider");
@@ -183,6 +184,7 @@ exports.patchUsers = async function (req, res) {
 };
 
 caver.initKASAPI(chainId, accessKeyId, secretAccessKey);
+caver.initKIP7API(chainId, accessKeyId, secretAccessKey);
 
 async function transferValue(fromId, toId, value) {
     // 결제
@@ -197,6 +199,17 @@ async function transferValue(fromId, toId, value) {
     const result = await caver.kas.wallet.requestValueTransfer(tx);
     return result;
 }
+
+exports.giveStable = async function (req, res) {
+    const buyerId = req.body.buyerId;
+    const amount = req.body.amount;
+    const findAddress = await userProvider.findOne(buyerId);
+    const walletAddress = findAddress.walletAddress;
+    const hexamount = caver.utils.convertToPeb(amount, "peb");
+    const result = await caver.kas.kip7.transfer(process.env.HONGIK_ALIAS, process.env["HONGIK_TOKEN_ADDRESS "], walletAddress, hexamount);
+    console.log(result);
+    return res.send(response(baseResponse.SUCCESS));
+};
 
 exports.postDeal = async function(req,res){
 
