@@ -22,6 +22,9 @@ module.exports = function(app){
     //hongiktoken 전송
     app.post('/app/stable',user.giveStable);
 
+    //KLAY 전송
+    app.post('/app/klay',user.giveKlay);
+
     // 전송
     app.post('/app/deal',user.postDeal);
 

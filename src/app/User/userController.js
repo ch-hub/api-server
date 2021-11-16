@@ -15,6 +15,9 @@ const accessKeyId = "KASKEKWRG3OV1873Y743FB5M";
 const secretAccessKey = "6P3gXM3bnjUjRr7beeHhG0KEZxhNAQzmC_7vOfNf";
 const request = require('request');
 
+caver.initKASAPI(chainId, accessKeyId, secretAccessKey);
+caver.initKIP7API(chainId, accessKeyId, secretAccessKey);
+caver.initWalletAPI(chainId, accessKeyId, secretAccessKey);
 
 /**
  * API No. 0
@@ -183,8 +186,6 @@ exports.patchUsers = async function (req, res) {
     }
 };
 
-caver.initKASAPI(chainId, accessKeyId, secretAccessKey);
-caver.initKIP7API(chainId, accessKeyId, secretAccessKey);
 
 async function transferValue(fromId, toId, value) {
     // 결제
@@ -205,8 +206,27 @@ exports.giveStable = async function (req, res) {
     const amount = req.body.amount;
     const findAddress = await userProvider.findOne(buyerId);
     const walletAddress = findAddress.walletAddress;
-    const hexamount = caver.utils.convertToPeb(amount, "peb");
-    const result = await caver.kas.kip7.transfer(process.env.HONGIK_ALIAS, process.env["HONGIK_TOKEN_ADDRESS "], walletAddress, hexamount);
+    const hexAmount = caver.utils.convertToPeb(amount, "peb");
+    const result = await caver.kas.kip7.transfer(process.env.HONGIK_ALIAS, process.env["HONGIK_TOKEN_ADDRESS "], walletAddress, hexAmount);
+    console.log(result);
+    return res.send(response(baseResponse.SUCCESS));
+};
+
+exports.giveKlay = async function (req, res) {
+    const buyerId = req.body.buyerId;
+    const amount = req.body.amount;
+    const findAddress = await userProvider.findOne(buyerId);
+    const walletAddress = findAddress.walletAddress;
+    const hexAmount = caver.utils.convertToPeb(amount, "mKLAY");
+    const tx = {
+        from: process.env.COMPANY_ADDRESS,
+        to: walletAddress,
+        value: hexAmount,
+        gas: 25000,
+        memo: 'memo',
+        submit: true
+    }
+    const result = await caver.kas.wallet.requestValueTransfer(tx)
     console.log(result);
     return res.send(response(baseResponse.SUCCESS));
 };
