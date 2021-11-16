@@ -70,13 +70,16 @@ exports.getWallet = async function(req,res){
     const result = await userProvider.getAccount(id);
     const balance = await nft.getBalance(result.walletAddress)
     const res2 = parseInt(balance,16)
+
     // console.log(res2.toString())
     // console.log(result.walletAddress)
     const walletBalance = res2.toString()
     const walletAd = result.walletAddress
-    const walletResult = {walletAd,walletBalance}
+    const walletBalance2 = caver.utils.convertFromPeb(walletBalance,"mKLAY");
+    const walletResult = {walletAd,walletBalance2}
     return res.send(response(baseResponse.SUCCESS, walletResult));
 }
+
 exports.makeipfs = async function(req,res)
 {
     const result = await nft.makeTokenURI();
@@ -92,8 +95,6 @@ exports.klays = async function(req,res)
         const value = output["klay-token"]["krw"]
         return res.send(response(baseResponse.SUCCESS, value));
     })
-
-    // return res.send(response(baseResponse.SUCCESS, result));
 }
 exports.test = async function(req,res){
     const timer = await userProvider.timer();
@@ -186,7 +187,6 @@ exports.patchUsers = async function (req, res) {
     }
 };
 
-
 async function transferValue(fromId, toId, value) {
     // 결제
     const fromUser = await userProvider.findOne(fromId);
@@ -231,7 +231,62 @@ exports.giveKlay = async function (req, res) {
     return res.send(response(baseResponse.SUCCESS));
 };
 
+
 exports.postDeal = async function(req,res){
+
+    const buyerId = req.body.buyerId;           // 구매자 ID
+    const productIdx = req.body.productIdx;     // 상품 ID
+    const installment = req.body.installment;   // 할부 카운트
+
+    const productInfo = await userProvider.findProduct(productIdx);
+
+    const klay_price = productInfo.price / 2000;
+
+    //첫 결제 대금(원화)
+    const firstpayWon = klay_price/installment + klay_price%installment
+    // 남은 결제 대금(원화)
+    const remainsWon = klay_price - firstpayWon
+
+    // 원화 -> klay(peb단위) 로 변환
+    // 지금은 그대로 바꿨지만 나중에 환율 변화 필요
+    const totalpayKlay = caver.utils.convertToPeb(klay_price, "mKLAY")
+    const firstpayKlay = caver.utils.convertToPeb(firstpayWon, "mKLAY")
+    const remainpayKlay = caver.utils.convertToPeb(remainsWon, "mKLAY")
+
+    const buyerToCompany = await transferValue(buyerId, "company",firstpayKlay);
+    const companyToSeller = await transferValue("company", productInfo.ownerId, firstpayKlay);
+    console.log(buyerToCompany)
+    console.log(companyToSeller)
+
+
+    // 남은 할부 개월 수, 결제 비용은 저장
+    const insertDeal = await userService.insertProductInfo(buyerId, remainpayKlay, installment-1);
+
+    const findIdx = await userProvider.findDealIdx(buyerId);
+
+    const deal_idx = findIdx.deal_idx;
+
+    const insertCal = await userService.insertCalInfo(deal_idx);
+
+
+    res.json(companyToSeller);
+
+
+    // console.log(productInfo.price)
+    // console.log(firstpayWon)
+    // console.log(remainsWon)
+    // console.log(' ')
+    // console.log(totalpayKlay)
+    // console.log(firstpayKlay)
+    // console.log(remainpayKlay)
+    // console.log(' ')
+    // console.log(caver.utils.convertFromPeb(totalpayKlay))
+    // console.log(caver.utils.convertFromPeb(firstpayKlay))
+    // console.log(caver.utils.convertFromPeb(remainpayKlay))
+};
+
+
+exports.postDealStable = async function(req,res){
 
     const buyerId = req.body.buyerId;           // 구매자 ID
     const productIdx = req.body.productIdx;     // 상품 ID
@@ -269,22 +324,7 @@ exports.postDeal = async function(req,res){
 
     res.json(companyToSeller);
 
-
-    // console.log(productInfo.price)
-    // console.log(firstpayWon)
-    // console.log(remainsWon)
-    // console.log(' ')
-    // console.log(totalpayKlay)
-    // console.log(firstpayKlay)
-    // console.log(remainpayKlay)
-    // console.log(' ')
-    // console.log(caver.utils.convertFromPeb(totalpayKlay))
-    // console.log(caver.utils.convertFromPeb(firstpayKlay))
-    // console.log(caver.utils.convertFromPeb(remainpayKlay))
 };
-
-
-
 
 
 
