@@ -40,6 +40,14 @@ exports.getAccount = async function (id){
 
   return userAccount[0];
 }
+exports.getDeal= async function (id){
+  const connection = await pool.getConnection(async (conn) => conn);
+  const userAccount = await userDao.selectDealId(connection, id);
+
+  connection.release();
+
+  return userAccount[0];
+}
 exports.retrieveUser = async function (userId) {
   const connection = await pool.getConnection(async (conn) => conn);
   const userResult = await userDao.selectUserId(connection, userId);

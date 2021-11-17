@@ -57,7 +57,12 @@ exports.postUsers = async function (req, res) {
     return res.send(signUpResponse);
 };
 
+exports.getBnplInfo = async function(req,res){
+    const id = req.params.id;
 
+    const dealId = await userProvider.getDeal(id);
+    return res.send(response(baseResponse.SUCCESS, dealId));
+}
 exports.getWallet = async function(req,res){
     const userIdFromJWT = req.verifiedToken.userId
 
@@ -285,7 +290,7 @@ exports.postDeal = async function(req,res){
 
 
     // 남은 할부 개월 수, 결제 비용은 저장
-    const insertDeal = await userService.insertProductInfo(buyerId, remainpayKlay, installment-1);
+    const insertDeal = await userService.insertProductInfo(buyerId, remainsWon, installment-1);
 
     const findIdx = await userProvider.findDealIdx(buyerId);
 
@@ -339,7 +344,6 @@ exports.postDealStable = async function(req,res){
     const result2 = await caver.kas.kip7.transfer(process.env.HONGIK_ALIAS, process.env.COMPANY_ADDRESS, walletAddress, hexAmount2);
     console.log(result1);
     console.log(result2);
-    return res.send(response(baseResponse.SUCCESS));
 
 
     const insertDeal = await userService.insertProductInfo(buyerId, remainsWon, installment-1);
@@ -349,6 +353,7 @@ exports.postDealStable = async function(req,res){
     const deal_idx = findIdx.deal_idx;
 
     const insertCal = await userService.insertCalInfo(deal_idx);
+    return res.send(response(baseResponse.SUCCESS));
 
 };
 

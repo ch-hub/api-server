@@ -123,6 +123,18 @@ async function selectUserAddress(connection, id) {
   );
   return selectUserAddressRow[0];
 }
+async function selectDealId(connection, id) {
+  const selectUserAddressQuery = `
+        SELECT remains,installment,deal_at
+        FROM Deal
+        WHERE buyerId = ?
+        ORDER BY deal_at DESC LIMIT 1;`;
+  const selectUserAddressRow = await connection.query(
+      selectUserAddressQuery,
+      id
+  );
+  return selectUserAddressRow[0];
+}
 async function selectNftAddress(connection){
   const selectNftListQuery = `
                 SELECT nft_address
@@ -208,5 +220,6 @@ module.exports = {
   selectCalInfo,
   insertCalInfo,
   selectNftAddress,
-  selectProductIdx
+  selectProductIdx,
+  selectDealId
 };
