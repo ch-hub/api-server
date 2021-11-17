@@ -207,7 +207,7 @@ exports.giveStable = async function (req, res) {
     const findAddress = await userProvider.findOne(buyerId);
     const walletAddress = findAddress.walletAddress;
     const hexAmount = caver.utils.convertToPeb(amount, "peb");
-    const result = await caver.kas.kip7.transfer(process.env.HONGIK_ALIAS, process.env["HONGIK_TOKEN_ADDRESS "], walletAddress, hexAmount);
+    const result = await caver.kas.kip7.transfer(process.env.HONGIK_ALIAS, process.env["COMPANY_ADDRESS "], walletAddress, hexAmount);
     console.log(result);
     return res.send(response(baseResponse.SUCCESS));
 };
@@ -300,29 +300,30 @@ exports.postDealStable = async function(req,res){
     // 남은 결제 대금(원화)
     const remainsWon = productInfo.price - firstpayWon
 
-    // 원화 -> klay(peb단위) 로 변환
-    // 지금은 그대로 바꿨지만 나중에 환율 변화 필요
-    const totalpayKlay = caver.utils.convertToPeb(productInfo.price, "mKLAY")
-    const firstpayKlay = caver.utils.convertToPeb(firstpayWon, "mKLAY")
-    const remainpayKlay = caver.utils.convertToPeb(remainsWon, "mKLAY")
 
-    const buyerToCompany = await transferValue(buyerId, "company",firstpayKlay);
-    const companyToSeller = await transferValue("company", productInfo.ownerId, firstpayKlay);
-    console.log(buyerToCompany)
-    console.log(companyToSeller)
+    const findAddress = await userProvider.findOne(buyerId);
+
+    const walletAddress = findAddress.walletAddress;
+    // 고객 -> company
+    const hexAmount1 = caver.utils.convertToPeb(firstpayWon, "peb");
+    // company -> seller
+    const hexAmount2 = caver.utils.convertToPeb(firstpayWon, "peb");
+
+    const result1 = await caver.kas.kip7.transfer(process.env.HONGIK_ALIAS, walletAddress, process.env.COMPANY_ADDRESS, hexAmount1);
+
+    const result2 = await caver.kas.kip7.transfer(process.env.HONGIK_ALIAS, process.env.COMPANY_ADDRESS, walletAddress, hexAmount2);
+    console.log(result1);
+    console.log(result2);
+    return res.send(response(baseResponse.SUCCESS));
 
 
-    // 남은 할부 개월 수, 결제 비용은 저장
-    const insertDeal = await userService.insertProductInfo(buyerId, remainpayKlay, installment-1);
+    const insertDeal = await userService.insertProductInfo(buyerId, remainsWon, installment-1);
 
     const findIdx = await userProvider.findDealIdx(buyerId);
 
     const deal_idx = findIdx.deal_idx;
 
     const insertCal = await userService.insertCalInfo(deal_idx);
-
-
-    res.json(companyToSeller);
 
 };
 
