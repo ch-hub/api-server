@@ -83,6 +83,21 @@ exports.findOne = async function (id) {
   return userAddressResult[0];
 };
 
+exports.findNftAddress = async function () {
+  const connection = await pool.getConnection(async (conn) => conn);
+  const userAddressResult = await userDao.selectNftAddress(connection);
+  connection.release();
+
+  return userAddressResult;
+};
+
+exports.findIdx = async function (nft_address) {
+  const connection = await pool.getConnection(async (conn) => conn);
+  const userAddressResult = await userDao.selectProductIdx(connection, nft_address);
+  connection.release();
+
+  return userAddressResult[0];
+};
 
 exports.findProduct = async function (productIdx) {
   const connection = await pool.getConnection(async (conn) => conn);

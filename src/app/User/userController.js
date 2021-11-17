@@ -18,6 +18,7 @@ const request = require('request');
 caver.initKASAPI(chainId, accessKeyId, secretAccessKey);
 caver.initKIP7API(chainId, accessKeyId, secretAccessKey);
 caver.initWalletAPI(chainId, accessKeyId, secretAccessKey);
+caver.initKIP17API(chainId, accessKeyId, secretAccessKey);
 
 /**
  * API No. 0
@@ -73,10 +74,34 @@ exports.getWallet = async function(req,res){
 
     // console.log(res2.toString())
     // console.log(result.walletAddress)
+
     const walletBalance = res2.toString()
     const walletAd = result.walletAddress
+    // klay 잔고
     const walletBalance2 = caver.utils.convertFromPeb(walletBalance,"mKLAY");
-    const walletResult = {walletAd,walletBalance2}
+    // stable 잔고
+    const ret = await caver.kas.kip7.balance(process.env.HONGIK_ALIAS, walletAd);
+
+    const ret2 = parseInt(ret.balance,16);
+
+    const stableBalance = caver.utils.convertToPeb(ret2, "peb");
+
+    const nftaddress = await userProvider.findNftAddress();
+
+    var i;
+    let productIdxList = []
+    for(i = 0; i<nftaddress.length; i++)
+    {
+        const nftret = await caver.kas.kip17.getTokenListByOwner(nftaddress[i].nft_address,walletAd);
+        if(nftret.items.length >=1)
+        {
+            let idxRes = await userProvider.findIdx(nftaddress[i].nft_address);
+            productIdxList.push(idxRes['productIdx'])
+        }
+    }
+
+
+    const walletResult = {walletAd,walletBalance2,stableBalance,productIdxList};
     return res.send(response(baseResponse.SUCCESS, walletResult));
 }
 
