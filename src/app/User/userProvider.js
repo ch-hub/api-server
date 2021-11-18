@@ -25,9 +25,6 @@ exports.retrieveUserList = async function (email) {
 exports.timer = async function (){
   const connection = await pool.getConnection(async (conn) => conn);
   const userAccount = await userDao.selectTimer(connection);
-  cron.schedule('* * * * * *', function () {
-    console.log(userAccount[0]);
-  });
   connection.release();
   return userAccount[0];
 }

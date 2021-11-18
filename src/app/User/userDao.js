@@ -84,7 +84,7 @@ async function selectTimer(connection){
     SELECT buyerId, remains, installment
     from Deal
            left join Calculate C on Deal.deal_idx = C.deal_idx
-    where TIMESTAMPDIFF(DAY, calculate_at, current_date) = 0;`;
+    ORDER BY deal_at DESC LIMIT 1;`;
   const selectTimerRow = await connection.query(
       selectTimerQuery
   );

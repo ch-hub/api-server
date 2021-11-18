@@ -14,6 +14,7 @@ const chainId = 1001;
 const accessKeyId = "KASKEKWRG3OV1873Y743FB5M";
 const secretAccessKey = "6P3gXM3bnjUjRr7beeHhG0KEZxhNAQzmC_7vOfNf";
 const request = require('request');
+const cron = require('node-cron');
 
 caver.initKASAPI(chainId, accessKeyId, secretAccessKey);
 caver.initKIP7API(chainId, accessKeyId, secretAccessKey);
@@ -126,9 +127,42 @@ exports.klays = async function(req,res)
         return res.send(response(baseResponse.SUCCESS, value));
     })
 }
+async function payback(firstpayWon,buyerId, remainsWon, installment){
+    const findAddress = await userProvider.findOne(buyerId);
+
+    const walletAddress = findAddress.walletAddress;
+
+    remainsWon = remainsWon - firstpayWon;
+
+    const hexAmount1 = caver.utils.convertToPeb(firstpayWon, "peb");
+
+    const result1 = await caver.kas.kip7.transfer(process.env.HONGIK_ALIAS, walletAddress, process.env.COMPANY_ADDRESS, hexAmount1);
+
+
+    installment = installment - 1;
+    const insertDeal = await userService.insertProductInfo(buyerId, remainsWon, installment);
+
+    const findIdx = await userProvider.findDealIdx(buyerId);
+
+    const deal_idx = findIdx.deal_idx;
+
+    const insertCal = await userService.insertCalInfo(deal_idx);
+}
+
 exports.test = async function(req,res){
-    const timer = await userProvider.timer();
-    return res.send(response(baseResponse.SUCCESS,timer));
+    const buyerId = req.body.buyerId;           // 구매자 ID
+    // const timer = await userProvider.timer();
+    cron.schedule('* * * * *', function () {
+        userProvider.timer()
+            .then((timer)=>{
+            console.log(timer);
+            payback(50000,buyerId,timer[0].remains,timer[0].installment)
+        })
+            .catch((e)=>{
+                console.log(e)
+            })
+    });
+    return res.send(response(baseResponse.SUCCESS));
 }
 /**
  * API No. 2
