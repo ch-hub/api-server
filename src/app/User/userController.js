@@ -16,6 +16,10 @@ const secretAccessKey = "6P3gXM3bnjUjRr7beeHhG0KEZxhNAQzmC_7vOfNf";
 const request = require('request');
 const cron = require('node-cron');
 
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs')
+
 caver.initKASAPI(chainId, accessKeyId, secretAccessKey);
 caver.initKIP7API(chainId, accessKeyId, secretAccessKey);
 caver.initWalletAPI(chainId, accessKeyId, secretAccessKey);
@@ -58,6 +62,10 @@ exports.postUsers = async function (req, res) {
     return res.send(signUpResponse);
 };
 
+exports.postImage = async function(req,res){
+    console.log(req.file);
+    return res.send(response(baseResponse.SUCCESS,req.file.filename));
+}
 exports.getBnplInfo = async function(req,res){
     const id = req.params.id;
 

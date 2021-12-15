@@ -1,7 +1,28 @@
 module.exports = function(app){
     const user = require('./userController');
     const jwtMiddleware = require('../../../config/jwtMiddleware');
+    const multer = require('multer');
+    const path = require('path');
+    const fs = require('fs');
+    try{
+        fs.readdirSync('uploads');
+    }
+    catch (error){
+        fs.mkdirSync('uploads');
+    }
 
+    const upload = multer({
+        storage: multer.diskStorage({
+            // set a localstorage destination
+            destination: (req, file, cb) => {
+                cb(null, 'uploads/');
+            },
+            // convert a file name
+            filename: (req, file, cb) => {
+                cb(null, new Date().valueOf() + path.extname(file.originalname));
+            },
+        }),
+    });
     // 0. 테스트 API
     // app.get('/app/test', user.getTest)
 
@@ -32,6 +53,9 @@ module.exports = function(app){
     app.post('/app/deal/stable',user.postDealStable);
 
     app.get('/app/bnpl/:id',user.getBnplInfo);
+
+
+    app.post('/app/image',upload.single('img'),user.postImage);
 
     // TODO: After 로그인 인증 방법 (JWT)
     // 로그인 하기 API (JWT 생성)
