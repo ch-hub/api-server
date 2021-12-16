@@ -161,9 +161,9 @@ exports.insertCalInfo = async function (deal_idx) {
         return errResponse(baseResponse.DB_ERROR);
     }
 }
-exports.upload = async function (name,price,info){
+exports.upload = async function (ownerId,name,price,info,imageName){
     try {
-        const insertProductInfoParams = [name,price,info];
+        const insertProductInfoParams = [ownerId,name,price,info,imageName];
         const connection = await pool.getConnection(async (conn) => conn);
         const editProduct = await userDao.insertProductInfo(connection, insertProductInfoParams)
         connection.release();

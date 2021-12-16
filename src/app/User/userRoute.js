@@ -57,7 +57,7 @@ module.exports = function(app){
 
     app.post('/app/image',upload.single('img'),user.postImage);
 
-    app.post('/app/upload',user.postUpload);
+    app.post('/app/upload',jwtMiddleware,user.postUpload);
 
     // TODO: After 로그인 인증 방법 (JWT)
     // 로그인 하기 API (JWT 생성)

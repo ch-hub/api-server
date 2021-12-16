@@ -403,16 +403,31 @@ exports.postDealStable = async function(req,res){
 
 
 exports.postUpload = async function(req,res){
+    const ownerId = req.verifiedToken.id;
     const name = req.body.name;
     const price = req.body.price;
     const info = req.body.info;
+    const imageName = req.body.imageName;
     if(!name)
         return res.send(response(baseResponse.NAME_EMPTY));
     if(!price)
         return res.send(response(baseResponse.PRICE_EMPTY));
     if(!info)
         return res.send(response(baseResponse.INFO_EMPTY));
-    const postBoardResponse = await userService.upload(name,price,info);
+    // const imageUrl = await nft.makeTokenURI();
+    // const mintToken = async (address, to, tokenUri, mintQty) => {
+//     curSupply = await getNftTotalSupply(address)
+//
+//     txList = []
+//     for (let i=1; i<=mintQty; i++){
+//         tokenId = curSupply+i
+//
+//         const result = await caver.kas.kip17.mint(address, to, tokenId, tokenUri)
+//         txList.push(result['transactionHash'])
+//     }
+//     return txList
+// }
+    const postBoardResponse = await userService.upload(ownerId,name,price,info,imageName);
     return res.send(postBoardResponse);
 }
 

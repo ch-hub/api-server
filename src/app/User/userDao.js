@@ -193,8 +193,8 @@ async function insertDealInfo(connection, insertDealInfoParams) {
 
 async function insertProductInfo(connection,insertProductInfoParams){
   const insertProductInfoQuery = `
-        INSERT INTO Product(name,price,info)
-        VALUES (?, ?, ?);
+        INSERT INTO Product(ownerId,name,price,info,imageName)
+        VALUES (?, ?, ?, ?,?);
     `;
   const insertProductInfoRow = await connection.query(
       insertProductInfoQuery,
