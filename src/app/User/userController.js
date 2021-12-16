@@ -25,6 +25,8 @@ caver.initKIP7API(chainId, accessKeyId, secretAccessKey);
 caver.initWalletAPI(chainId, accessKeyId, secretAccessKey);
 caver.initKIP17API(chainId, accessKeyId, secretAccessKey);
 
+const SELLER_ADDR = '0x2daf96ac3075c7e74a03844de0a31f17477e92e0'
+
 /**
  * API No. 0
  * API Name : 테스트 API
@@ -65,7 +67,7 @@ exports.postUsers = async function (req, res) {
 exports.postImage = async function(req,res){
     console.log(req.file);
 
-    return res.send(response(baseResponse.SUCCESS, req.file.path));
+    return res.send(response(baseResponse.SUCCESS, req.file.filename));
 }
 exports.getBnplInfo = async function(req,res){
     const id = req.params.id;
