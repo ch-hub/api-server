@@ -64,7 +64,8 @@ exports.postUsers = async function (req, res) {
 
 exports.postImage = async function(req,res){
     console.log(req.file);
-    return res.send(response(baseResponse.SUCCESS,req.file.filename));
+
+    return res.send(response(baseResponse.SUCCESS, req.file.path));
 }
 exports.getBnplInfo = async function(req,res){
     const id = req.params.id;
