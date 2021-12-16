@@ -25,6 +25,8 @@ caver.initKIP7API(chainId, accessKeyId, secretAccessKey);
 caver.initWalletAPI(chainId, accessKeyId, secretAccessKey);
 caver.initKIP17API(chainId, accessKeyId, secretAccessKey);
 
+const SELLER_ADDR = '0x2daf96ac3075c7e74a03844de0a31f17477e92e0'
+
 /**
  * API No. 0
  * API Name : 테스트 API
@@ -400,7 +402,19 @@ exports.postDealStable = async function(req,res){
 };
 
 
-
+exports.postUpload = async function(req,res){
+    const name = req.body.name;
+    const price = req.body.price;
+    const info = req.body.info;
+    if(!name)
+        return res.send(response(baseResponse.NAME_EMPTY));
+    if(!price)
+        return res.send(response(baseResponse.PRICE_EMPTY));
+    if(!info)
+        return res.send(response(baseResponse.INFO_EMPTY));
+    const postBoardResponse = await userService.upload(name,price,info);
+    return res.send(postBoardResponse);
+}
 
 
 /** JWT 토큰 검증 API
