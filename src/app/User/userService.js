@@ -161,3 +161,17 @@ exports.insertCalInfo = async function (deal_idx) {
         return errResponse(baseResponse.DB_ERROR);
     }
 }
+exports.upload = async function (name,price,info){
+    try {
+        const insertProductInfoParams = [name,price,info];
+        const connection = await pool.getConnection(async (conn) => conn);
+        const editProduct = await userDao.insertProductInfo(connection, insertProductInfoParams)
+        connection.release();
+
+        return response(baseResponse.SUCCESS);
+
+    } catch (err) {
+        logger.error(`App - editUser Service error\n: ${err.message}`);
+        return errResponse(baseResponse.DB_ERROR);
+    }
+}

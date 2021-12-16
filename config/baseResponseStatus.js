@@ -30,6 +30,9 @@ module.exports = {
 
     USER_STATUS_EMPTY : { "isSuccess": false, "code": 2018, "message": "회원 상태값을 입력해주세요" },
 
+    NAME_EMPTY : { "isSuccess": false, "code": 2019, "message": "상품 이름을 입력하세요" },
+    PRICE_EMPTY : { "isSuccess": false, "code": 2020, "message": "상품 가격을 입력하세요" },
+    INFO_EMPTY : { "isSuccess": false, "code": 2021, "message": "상품 정보를 입력하세요" },
     // Response error
     SIGNUP_REDUNDANT_ID : { "isSuccess": false, "code": 3001, "message":"중복된 아이디입니다." },
     SIGNUP_REDUNDANT_NICKNAME : { "isSuccess": false, "code": 3002, "message":"중복된 닉네임입니다." },

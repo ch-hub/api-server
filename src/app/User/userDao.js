@@ -188,8 +188,19 @@ async function insertDealInfo(connection, insertDealInfoParams) {
       insertDealInfoQuery,
       insertDealInfoParams
   );
-
   return insertDealInfoRow;
+}
+
+async function insertProductInfo(connection,insertProductInfoParams){
+  const insertProductInfoQuery = `
+        INSERT INTO Product(name,price,info)
+        VALUES (?, ?, ?);
+    `;
+  const insertProductInfoRow = await connection.query(
+      insertProductInfoQuery,
+      insertProductInfoParams
+  );
+  return insertProductInfoRow;
 }
 async function insertCalInfo(connection, deal_idx) {
   const insertCalInfoQuery = `
@@ -203,6 +214,8 @@ async function insertCalInfo(connection, deal_idx) {
 
   return insertCalInfoRow;
 }
+
+
 
 module.exports = {
   selectUser,
@@ -221,5 +234,6 @@ module.exports = {
   insertCalInfo,
   selectNftAddress,
   selectProductIdx,
-  selectDealId
+  selectDealId,
+  insertProductInfo
 };

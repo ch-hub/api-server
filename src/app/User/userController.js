@@ -63,8 +63,9 @@ exports.postUsers = async function (req, res) {
 };
 
 exports.postImage = async function(req,res){
+    const url = req.body.url;
     console.log(req.file);
-    return res.send(response(baseResponse.SUCCESS,req.file.filename));
+    return res.send(response(baseResponse.SUCCESS,req.file.path));
 }
 exports.getBnplInfo = async function(req,res){
     const id = req.params.id;
@@ -399,7 +400,19 @@ exports.postDealStable = async function(req,res){
 
 };
 
-
+exports.postUpload = async function (req,res){
+    const name = req.body.name;
+    const price = req.body.price;
+    const info = req.body.info;
+    if(!name)
+        return res.send(response(baseResponse.NAME_EMPTY));
+    if(!price)
+        return res.send(response(baseResponse.PRICE_EMPTY));
+    if(!info)
+        return res.send(response(baseResponse.INFO_EMPTY));
+    const postUploadResponse = await userService.upload(name,price,info);
+    return res.send(postUploadResponse);
+}
 
 
 
