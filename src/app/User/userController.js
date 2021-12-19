@@ -68,6 +68,7 @@ exports.postUsers = async function (req, res) {
 
 exports.postImage = async function(req,res){
     console.log(req.file);
+
     return res.send(response(baseResponse.SUCCESS,req.file.filename));
 }
 exports.getBnplInfo = async function(req,res){
@@ -417,7 +418,7 @@ exports.postUpload = async function(req,res){
     if(!info)
         return res.send(response(baseResponse.INFO_EMPTY));
 
-    const imageUrl = await nft.makeTokenURI('uploads\\' + imageName);
+    const imageUrl = await nft.makeTokenURI('/uploads/' + imageName);
 
     const tokenMetadata = {
         description : info,
@@ -429,7 +430,7 @@ exports.postUpload = async function(req,res){
     const jsonName = ''+ name + '.json';
 
     fs.writeFileSync('./jsonDir/'+jsonName,jsonfile)
-    const tokenUrl = await nft.makeTokenURI('jsonDir\\' + jsonName);
+    const tokenUrl = await nft.makeTokenURI('/jsonDir/' + jsonName);
 
     const walletAddress = await userProvider.getAccount(ownerId);
 
