@@ -33,11 +33,11 @@ const SELLER_ADDR = '0x2daf96ac3075c7e74a03844de0a31f17477e92e0'
  * API Name : 테스트 API
  * [GET] /app/test
  */
-exports.getTest = async function (req, res) {
-    const tokenId = await nft.getNftTotalSupply(SELLER_ADDR);
-
-    return res.send(response(baseResponse.SUCCESS,tokenId))
-}
+// exports.getTest = async function (req, res) {
+//     const tokenId = await nft.getNftTotalSupply(SELLER_ADDR);
+//
+//     return res.send(response(baseResponse.SUCCESS,tokenId))
+// }
 
 /**
  * API No. 1
@@ -179,6 +179,18 @@ exports.test = async function(req,res){
             })
     });
     return res.send(response(baseResponse.SUCCESS));
+}
+const cronSchedule = async function (buyerId,installment,remains,firstpayWon){
+    cron.schedule('* * * * *', function () {
+        userProvider.timer()
+            .then((timer)=>{
+                console.log(timer);
+                payback(firstpayWon,buyerId,timer[0].remains,timer[0].installment)
+            })
+            .catch((e)=>{
+                console.log(e)
+            })
+    });
 }
 /**
  * API No. 2
@@ -405,7 +417,7 @@ exports.postDealStable = async function(req,res){
     // 고객 -> company
     const hexAmount1 = caver.utils.convertToPeb(firstpayWon.toString(), "peb");
     // company -> seller
-    const hexAmount2 = caver.utils.convertToPeb((productInfo.price * 0.8).toString(), "peb");
+    const hexAmount2 = caver.utils.convertToPeb(sellerWon.toString(), "peb");
 
 
 
@@ -434,6 +446,8 @@ exports.postDealStable = async function(req,res){
 
 
     const patchOwner = await userService.patchOwnerId(buyerId,productIdx);
+
+    const dealCron = await cronSchedule(buyerId,installment,remainsWon,firstpayWon)
     return res.send(response(baseResponse.SUCCESS));
 
 };
