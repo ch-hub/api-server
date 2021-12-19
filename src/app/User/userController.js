@@ -19,6 +19,7 @@ const cron = require('node-cron');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs')
+const {error} = require("winston");
 
 caver.initKASAPI(chainId, accessKeyId, secretAccessKey);
 caver.initKIP7API(chainId, accessKeyId, secretAccessKey);
@@ -284,8 +285,18 @@ exports.giveStable = async function (req, res) {
     const findAddress = await userProvider.findOne(buyerId);
     const walletAddress = findAddress.walletAddress;
     const hexAmount = caver.utils.convertToPeb(amount, "peb");
-    const result = await caver.kas.kip7.transfer(process.env.HONGIK_ALIAS, process.env["COMPANY_ADDRESS "], walletAddress, hexAmount);
-    console.log(result);
+
+    // console.log('hexAmount', hexAmount)
+    // console.log('comapny addr: ', process.env['COMPANY_ADDRESS'])
+
+    try{
+        const result = await caver.kas.kip7.transfer(process.env.HONGIK_ALIAS, process.env["COMPANY_ADDRESS "], walletAddress, hexAmount);
+
+    }catch (e) {
+        console.error(e)
+    }
+
+    // console.log(result);
     return res.send(response(baseResponse.SUCCESS));
 };
 
@@ -369,37 +380,46 @@ exports.postDealStable = async function(req,res){
     const productIdx = req.body.productIdx;     // 상품 ID
     const installment = req.body.installment;   // 할부 카운트
 
+
+
     const productInfo = await userProvider.findProduct(productIdx);
 
 
     // 첫 결제 대금(원화)
-    const firstpayWon = productInfo.price/installment + productInfo.price%installment
+    const firstpayWon = Math.floor(productInfo.price/installment + productInfo.price%installment)
     // 남은 결제 대금(원화)
     const remainsWon = productInfo.price - firstpayWon
+    const sellerWon = Math.floor(productInfo.price * 0.8)
 
-
+    // 구매자 지갑 주소 가져오기
     const findAddress = await userProvider.findOne(buyerId);
+    const buyerWalletAddress = findAddress.walletAddress;
 
-    const walletAddress = findAddress.walletAddress;
+    // 판매자 지갑주소 가져오기
+    const sellerAddress = productInfo.ownerId;
+    const findSeller = await userProvider.findOne(sellerAddress);
+    const sellerWalletAddress = findSeller.walletAddress;
+
     // 고객 -> company
-    const hexAmount1 = caver.utils.convertToPeb(firstpayWon, "peb");
+    const hexAmount1 = caver.utils.convertToPeb(firstpayWon.toString(), "peb");
     // company -> seller
-    const hexAmount2 = caver.utils.convertToPeb(firstpayWon, "peb");
+    const hexAmount2 = caver.utils.convertToPeb((productInfo.price * 0.8).toString(), "peb");
 
-    const result1 = await caver.kas.kip7.transfer(process.env.HONGIK_ALIAS, walletAddress, process.env.COMPANY_ADDRESS, hexAmount1);
 
-    const result2 = await caver.kas.kip7.transfer(process.env.HONGIK_ALIAS, process.env.COMPANY_ADDRESS, walletAddress, hexAmount2);
+
+    const result1 = await caver.kas.kip7.transfer(process.env.HONGIK_ALIAS, buyerWalletAddress, process.env.COMPANY_ADDRESS, hexAmount1);
+    const result2 = await caver.kas.kip7.transfer(process.env.HONGIK_ALIAS, process.env.COMPANY_ADDRESS, sellerWalletAddress, hexAmount2);
     console.log(result1);
     console.log(result2);
 
 
-    const insertDeal = await userService.insertProductInfo(buyerId, remainsWon, installment-1);
-
-    const findIdx = await userProvider.findDealIdx(buyerId);
-
-    const deal_idx = findIdx.deal_idx;
-
-    const insertCal = await userService.insertCalInfo(deal_idx);
+    // const insertDeal = await userService.insertProductInfo(buyerId, remainsWon, installment-1);
+    //
+    // const findIdx = await userProvider.findDealIdx(buyerId);
+    //
+    // const deal_idx = findIdx.deal_idx;
+    //
+    // const insertCal = await userService.insertCalInfo(deal_idx);
     return res.send(response(baseResponse.SUCCESS));
 
 };
