@@ -32,9 +32,11 @@ const SELLER_ADDR = '0x2daf96ac3075c7e74a03844de0a31f17477e92e0'
  * API Name : 테스트 API
  * [GET] /app/test
  */
-// exports.getTest = async function (req, res) {
-//     return res.send(response(baseResponse.SUCCESS))
-// }
+exports.getTest = async function (req, res) {
+    const tokenId = await nft.getNftTotalSupply(SELLER_ADDR);
+
+    return res.send(response(baseResponse.SUCCESS,tokenId))
+}
 
 /**
  * API No. 1
@@ -328,7 +330,7 @@ exports.postDeal = async function(req,res){
     const remainpayKlay = caver.utils.convertToPeb(remainsWon, "mKLAY")
 
     const buyerToCompany = await transferValue(buyerId, "company",firstpayKlay);
-    const companyToSeller = await transferValue("company", productInfo.ownerId, firstpayKlay);
+    const companyToSeller = await transferValue("company", productInfo.ownerId, totalpayKlay*0.8);
     console.log(buyerToCompany)
     console.log(companyToSeller)
 
@@ -403,7 +405,7 @@ exports.postDealStable = async function(req,res){
 
 
 exports.postUpload = async function(req,res){
-    const ownerId = req.verifiedToken.id;
+    const ownerId = req.verifiedToken.userId;
     const name = req.body.name;
     const price = req.body.price;
     const info = req.body.info;
@@ -414,20 +416,29 @@ exports.postUpload = async function(req,res){
         return res.send(response(baseResponse.PRICE_EMPTY));
     if(!info)
         return res.send(response(baseResponse.INFO_EMPTY));
-    // const imageUrl = await nft.makeTokenURI();
-    // const mintToken = async (address, to, tokenUri, mintQty) => {
-//     curSupply = await getNftTotalSupply(address)
-//
-//     txList = []
-//     for (let i=1; i<=mintQty; i++){
-//         tokenId = curSupply+i
-//
-//         const result = await caver.kas.kip17.mint(address, to, tokenId, tokenUri)
-//         txList.push(result['transactionHash'])
-//     }
-//     return txList
-// }
-    const postBoardResponse = await userService.upload(ownerId,name,price,info,imageName);
+
+    const imageUrl = await nft.makeTokenURI('uploads\\' + imageName);
+
+    const tokenMetadata = {
+        description : info,
+        image : imageUrl,
+        name : name
+    }
+    const jsonfile = JSON.stringify(tokenMetadata);
+    console.log(jsonfile);
+    const jsonName = ''+ name + '.json';
+
+    fs.writeFileSync('./jsonDir/'+jsonName,jsonfile)
+    const tokenUrl = await nft.makeTokenURI('jsonDir\\' + jsonName);
+
+    const walletAddress = await userProvider.getAccount(ownerId);
+
+    const mintToken = await nft.mintToken(SELLER_ADDR,walletAddress.walletAddress, tokenUrl,1)
+
+    console.log(mintToken);
+    const tokenId = await nft.getNftTotalSupply(SELLER_ADDR);
+
+    const postBoardResponse = await userService.upload(ownerId,name,price,info,imageName,SELLER_ADDR,imageUrl,tokenId+1);
     return res.send(postBoardResponse);
 }
 

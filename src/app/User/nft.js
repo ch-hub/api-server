@@ -113,18 +113,18 @@ const getBalance = async (account) => {
 //  * @param {string} 발행량
 //  * @returns {array} 생성된 토큰 txhash 값
 //  */
-// const mintToken = async (address, to, tokenUri, mintQty) => {
-//     curSupply = await getNftTotalSupply(address)
-//
-//     txList = []
-//     for (let i=1; i<=mintQty; i++){
-//         tokenId = curSupply+i
-//
-//         const result = await caver.kas.kip17.mint(address, to, tokenId, tokenUri)
-//         txList.push(result['transactionHash'])
-//     }
-//     return txList
-// }
+const mintToken = async (address, to, tokenUri, mintQty) => {
+    curSupply = await getNftTotalSupply(address)
+
+    txList = []
+    for (let i=1; i<=mintQty; i++){
+        tokenId = curSupply+i
+
+        const result = await caver.kas.kip17.mint(address, to, tokenId, tokenUri)
+        txList.push(result['transactionHash'])
+    }
+    return txList
+}
 //
 // /**
 //  * owner가 갖고있는 특정 NFT 수량을 반환
@@ -161,13 +161,13 @@ const getBalance = async (account) => {
 //  * @param {string} nft contract 주소값
 //  * @returns {number} nft 지금까지의 발행량
 //  */
-// const getNftTotalSupply = async (address) => {
-//     const result = await caver.kas.tokenHistory.getNFTContract(address)
-//     return Number(result['totalSupply'])
-// }
+const getNftTotalSupply = async (address) => {
+    const result = await caver.kas.tokenHistory.getNFTContract(address)
+    return Number(result['totalSupply'])
+}
 //
 //
-const makeTokenURI = async () => {
+const makeTokenURI = async (imageName) => {
     const option = {
         headers: [
             {
@@ -182,7 +182,7 @@ const makeTokenURI = async () => {
     // Set connection with IPFS Node
     caver.ipfs.setIPFSNode('ipfs.infura.io', 5001, true)
     // `ipfs.txt` is located at `caver-js-examples/ipfs/using_ipfs_with_caver/resources`.
-    const inputJSONfile = `C:\\Users\\장창훈\\api-server\\uploads`; // 민권 여기에 너가 올리고싶은 파일 경로 올리면댐
+    const inputJSONfile = `C:\\Users\\장창훈\\api-server\\`+imageName; // 민권 여기에 너가 올리고싶은 파일 경로 올리면댐
 
     // Add a file to IPFS with file path
     const cid = await caver.ipfs.add(inputJSONfile)
@@ -208,9 +208,9 @@ module.exports.getBalance = getBalance
 // module.exports.deployNft = deployNft
 // module.exports.checkTxCommitted = checkTxCommitted
 // module.exports.getContractAddress = getContractAddress
-// module.exports.mintToken = mintToken
+module.exports.mintToken = mintToken
 // module.exports.getNftQtyByOwner = getNftQtyByOwner
 // module.exports.getTokenIdsByOwner = getTokenIdsByOwner
-// module.exports.getNftTotalSupply = getNftTotalSupply
+module.exports.getNftTotalSupply = getNftTotalSupply
 // module.exports.initKAS = initKAS
 module.exports.makeTokenURI = makeTokenURI
