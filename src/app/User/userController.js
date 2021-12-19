@@ -411,17 +411,10 @@ exports.postDealStable = async function(req,res){
 
     const result1 = await caver.kas.kip7.transfer(process.env.HONGIK_ALIAS, buyerWalletAddress, process.env.COMPANY_ADDRESS, hexAmount1);
     const result2 = await caver.kas.kip7.transfer(process.env.HONGIK_ALIAS, process.env.COMPANY_ADDRESS, sellerWalletAddress, hexAmount2);
-    console.log(result1);
-    console.log(result2);
 
-    console.log(productInfo)
     const nftaddress = productInfo.nft_address;
     const tokenId = productInfo.tokenId;
 
-    console.log(nftaddress)
-    console.log(tokenId)
-    console.log(sellerWalletAddress)
-    console.log(buyerWalletAddress)
 
 
     try{
@@ -431,15 +424,14 @@ exports.postDealStable = async function(req,res){
         console.error(e);
     }
 
-    // const insertDeal = await userService.insertProductInfo(buyerId, remainsWon, installment-1);
-    //
-    // const findIdx = await userProvider.findDealIdx(buyerId);
-    //
-    // const deal_idx = findIdx.deal_idx;
-    //
-    // const insertCal = await userService.insertCalInfo(deal_idx);
-    console.log("buyerId",buyerId)
-    console.log("productIdx",productIdx)
+    const insertDeal = await userService.insertProductInfo(buyerId, remainsWon, installment-1);
+
+    const findIdx = await userProvider.findDealIdx(buyerId);
+
+    const deal_idx = findIdx.deal_idx;
+
+    const insertCal = await userService.insertCalInfo(deal_idx);
+
 
     const patchOwner = await userService.patchOwnerId(buyerId,productIdx);
     return res.send(response(baseResponse.SUCCESS));
