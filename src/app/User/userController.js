@@ -106,19 +106,21 @@ exports.getWallet = async function(req,res){
 
     const stableBalance = caver.utils.convertToPeb(ret2, "peb");
 
-    const nftaddress = await userProvider.findNftAddress();
-
-    var i;
-    let productIdxList = []
-    for(i = 0; i<nftaddress.length; i++)
-    {
-        const nftret = await caver.kas.kip17.getTokenListByOwner(nftaddress[i].nft_address,walletAd);
-        if(nftret.items.length >=1)
-        {
-            let idxRes = await userProvider.findIdx(nftaddress[i].nft_address);
-            productIdxList.push(idxRes['productIdx'])
-        }
-    }
+    // productIdxList = []
+    //
+    // const nftaddress = await userProvider.findNftAddress();
+    //
+    // var i;
+    // let productIdxList = []
+    // for(i = 0; i<nftaddress.length; i++)
+    // {
+    //     const nftret = await caver.kas.kip17.getTokenListByOwner(nftaddress[i].nft_address,walletAd);
+    //     if(nftret.items.length >=1)
+    //     {
+    //         let idxRes = await userProvider.findIdx(nftaddress[i].nft_address);
+    //         productIdxList.push(idxRes['productIdx'])
+    //     }
+    // }
 
 
     const walletResult = {walletAd,walletBalance2,stableBalance,productIdxList};
@@ -412,10 +414,22 @@ exports.postDealStable = async function(req,res){
     console.log(result1);
     console.log(result2);
 
+    console.log(productInfo)
     const nftaddress = productInfo.nft_address;
     const tokenId = productInfo.tokenId;
-    const ret = await caver.kas.kip17.transfer(nftaddress,sellerWalletAddress,buyerWalletAddress,tokenId);
-    console.log(ret);
+
+    console.log(nftaddress)
+    console.log(tokenId)
+    console.log(sellerWalletAddress)
+    console.log(buyerWalletAddress)
+
+
+    try{
+        const ret = await caver.kas.kip17.transfer(nftaddress,sellerWalletAddress,sellerWalletAddress, buyerWalletAddress, caver.utils.toHex(tokenId));
+        console.log(ret);
+    }catch (e) {
+        console.error(e);
+    }
 
     // const insertDeal = await userService.insertProductInfo(buyerId, remainsWon, installment-1);
     //
@@ -424,6 +438,8 @@ exports.postDealStable = async function(req,res){
     // const deal_idx = findIdx.deal_idx;
     //
     // const insertCal = await userService.insertCalInfo(deal_idx);
+    console.log("buyerId",buyerId)
+    console.log("productIdx",productIdx)
 
     const patchOwner = await userService.patchOwnerId(buyerId,productIdx);
     return res.send(response(baseResponse.SUCCESS));

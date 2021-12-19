@@ -157,7 +157,7 @@ async function selectProductIdx(connection, nft_address){
 }
 async function selectProductInfo(connection, productIdx) {
   const selectProductQuery = `
-        SELECT price, ownerId
+        SELECT price, ownerId, nft_address, tokenId
         FROM Product 
         WHERE productIdx = ?;`;
   const selectProductRow = await connection.query(
