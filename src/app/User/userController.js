@@ -424,6 +424,8 @@ exports.postDealStable = async function(req,res){
     // const deal_idx = findIdx.deal_idx;
     //
     // const insertCal = await userService.insertCalInfo(deal_idx);
+
+    const patchOwner = await userService.patchOwnerId(buyerId,productIdx);
     return res.send(response(baseResponse.SUCCESS));
 
 };

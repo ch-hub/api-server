@@ -215,6 +215,19 @@ async function insertCalInfo(connection, deal_idx) {
   return insertCalInfoRow;
 }
 
+async function patchOwnerIds(connection,patchOwnerParams){
+  const updateCalInfoQuery = `
+        UPDATE Product
+        SET ownerId = ?
+        WHERE productIdx = ?;
+    `;
+  const updateCalInfoRow = await connection.query(
+      updateCalInfoQuery,
+      patchOwnerParams
+  );
+
+  return updateCalInfoRow;
+}
 
 
 module.exports = {
@@ -235,5 +248,6 @@ module.exports = {
   selectNftAddress,
   selectProductIdx,
   selectDealId,
-  insertProductInfo
+  insertProductInfo,
+  patchOwnerIds
 };

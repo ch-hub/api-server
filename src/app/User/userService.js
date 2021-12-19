@@ -161,6 +161,20 @@ exports.insertCalInfo = async function (deal_idx) {
         return errResponse(baseResponse.DB_ERROR);
     }
 }
+exports.patchOwnerId = async function(buyerId,productIdx){
+    try {
+        const patchOwnerParams = [buyerId, productIdx];
+        const connection = await pool.getConnection(async (conn) => conn);
+        const editUserResult = await userDao.patchOwnerIds(connection, patchOwnerParams)
+        connection.release();
+
+        return response(baseResponse.SUCCESS);
+
+    } catch (err) {
+        logger.error(`App - editUser Service error\n: ${err.message}`);
+        return errResponse(baseResponse.DB_ERROR);
+    }
+}
 exports.upload = async function (ownerId,name,price,info,imageName,SELLER_ADDR,imageUrl,tokenId){
     try {
         const insertProductInfoParams = [ownerId,name,price,info,imageName,SELLER_ADDR,imageUrl,tokenId];
