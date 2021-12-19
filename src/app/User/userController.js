@@ -123,7 +123,7 @@ exports.getWallet = async function(req,res){
     // }
 
 
-    const walletResult = {walletAd,walletBalance2,stableBalance,productIdxList};
+    const walletResult = {walletAd,walletBalance2,stableBalance};
     return res.send(response(baseResponse.SUCCESS, walletResult));
 }
 
