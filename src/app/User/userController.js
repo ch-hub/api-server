@@ -412,6 +412,10 @@ exports.postDealStable = async function(req,res){
     console.log(result1);
     console.log(result2);
 
+    const nftaddress = productInfo.nft_address;
+    const tokenId = productInfo.tokenId;
+    const ret = await caver.kas.kip17.transfer(nftaddress,sellerWalletAddress,buyerWalletAddress,tokenId);
+    console.log(ret);
 
     // const insertDeal = await userService.insertProductInfo(buyerId, remainsWon, installment-1);
     //
