@@ -448,6 +448,9 @@ exports.postDealStable = async function(req,res){
     const patchOwner = await userService.patchOwnerId(buyerId,productIdx);
 
     const dealCron = await cronSchedule(buyerId,installment,remainsWon,firstpayWon)
+
+    const patchStatuss = await userService.patchStatus(productIdx);
+
     return res.send(response(baseResponse.SUCCESS));
 
 };

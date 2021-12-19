@@ -175,6 +175,19 @@ exports.patchOwnerId = async function(buyerId,productIdx){
         return errResponse(baseResponse.DB_ERROR);
     }
 }
+exports.patchStatus = async function(productIdx){
+    try {
+        const connection = await pool.getConnection(async (conn) => conn);
+        const editUserResult = await userDao.patchStatusSold(connection, productIdx)
+        connection.release();
+
+        return response(baseResponse.SUCCESS);
+
+    } catch (err) {
+        logger.error(`App - editUser Service error\n: ${err.message}`);
+        return errResponse(baseResponse.DB_ERROR);
+    }
+}
 exports.upload = async function (ownerId,name,price,info,imageName,SELLER_ADDR,imageUrl,tokenId){
     try {
         const insertProductInfoParams = [ownerId,name,price,info,imageName,SELLER_ADDR,imageUrl,tokenId];

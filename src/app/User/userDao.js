@@ -228,7 +228,19 @@ async function patchOwnerIds(connection,patchOwnerParams){
 
   return updateCalInfoRow;
 }
+async function patchStatusSold(connection,productIdx){
+  const updateStatusInfoQuery = `
+        UPDATE Product
+        SET is_sold = 1
+        WHERE productIdx = ?;
+    `;
+  const updateStatusInfoRow = await connection.query(
+      updateStatusInfoQuery,
+      productIdx
+  );
 
+  return updateStatusInfoRow;
+}
 
 module.exports = {
   selectUser,
@@ -249,5 +261,6 @@ module.exports = {
   selectProductIdx,
   selectDealId,
   insertProductInfo,
-  patchOwnerIds
+  patchOwnerIds,
+  patchStatusSold
 };
